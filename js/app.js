@@ -27,6 +27,7 @@ function getStyleRule(name) {
 }
 
 function fnRep(myId) {
+    manageInterval('off');
     var pc = "#postedComment" + myId;
     var rl = parseInt($(pc).attr('reply-level'));
     rl++;
@@ -49,6 +50,7 @@ function fnRep(myId) {
 }
 
 function fnEd(myId) {
+    manageInterval('off');
     var t = $("#comm" + myId).text();
     var pc = "#postedComment" + myId;
     $(pc).empty();
@@ -73,6 +75,9 @@ function fnD(myId) {
     req.done(function(ajaxOp) {
         $("#op").append(ajaxOp);
     });
+    $('html, body').animate({
+        scrollTop: $(pc1).offset().top
+    }, 500);
 }
 
 function fnPutR(myId) {
@@ -90,6 +95,7 @@ function fnPutR(myId) {
     req.done(function(ajaxOp) {
         $("#op").append(ajaxOp);
     });
+    manageInterval('on');
 }
 
 function fnputE(myId) {
@@ -106,29 +112,43 @@ function fnputE(myId) {
     req.done(function(ajaxOp) {
         $("#op").append(ajaxOp);
     });
+    manageInterval('on');
 }
 
+function manageInterval(myswitch) {
+    if (myswitch == 'on') {
+        refreshInterval = setInterval("pop()", 5000);
+    } else {
+        refreshInterval = clearInterval(refreshInterval);
+    }
+}
 
-var cid = 0;
-$(function() {
+function pop() {
+    console.log(((new Date()).getTime() / 1000) + "pop fired");
     var request = $.ajax({
         url: "components/populateComments.php?user=" + $("#user").text(),
         type: "GET",
         dataType: "html"
     });
     request.done(function(ajaxOutput) {
+        $("#op").empty();
         $("#op").append(ajaxOutput);
         cid = parseInt($("#maxcid").text()) + 1;
     });
+}
 
+var cid = 0;
+var refreshInterval = null;
+
+$(function() {
     $('#submit').on('click', function() {
         var text = toHTML($('#comment').val());
         $("#op").append('<div id="postedComment' + cid + '" reply-level="0"><p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + cid + '"></p><div class="none" id="controls' + cid + '"><span><a href="#" id="rep' + cid + '" onclick="fnRep(' + cid + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + cid + '" onclick="fnEd(' + cid + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + cid + '" onclick="fnD(' + cid + ')">delete&nbsp;</a></span></div></div>');
         $("#comm" + cid).append(text);
-        cid++;
         $('html, body').animate({
             scrollTop: $("#postedComment" + cid).offset().top
         }, 500);
+        cid++;
         var req = $.ajax({
             url: "components/addReply.php?user=" + $("#user").text() + "&cmt=" + text + "&rid=0",
             type: "GET",
