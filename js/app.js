@@ -126,6 +126,9 @@ $(function() {
         $("#op").append('<div id="postedComment' + cid + '" reply-level="0"><p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + cid + '"></p><div class="none" id="controls' + cid + '"><span><a href="#" id="rep' + cid + '" onclick="fnRep(' + cid + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + cid + '" onclick="fnEd(' + cid + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + cid + '" onclick="fnD(' + cid + ')">delete&nbsp;</a></span></div></div>');
         $("#comm" + cid).append(text);
         cid++;
+        $('html, body').animate({
+            scrollTop: $("#postedComment" + cid).offset().top
+        }, 500);
         var req = $.ajax({
             url: "components/addReply.php?user=" + $("#user").text() + "&cmt=" + text + "&rid=0",
             type: "GET",

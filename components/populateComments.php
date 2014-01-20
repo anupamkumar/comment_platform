@@ -53,7 +53,7 @@
 				$cur = array_pop($tempStack);
 				if($max < $cur)
 					$max = $cur;
-				if(count($tempStack) >= 2)
+				if($cur == null)
 					$op = $op."</div>";					
 			}
 			else
