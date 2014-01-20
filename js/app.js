@@ -124,7 +124,6 @@ function manageInterval(myswitch) {
 }
 
 function pop() {
-    console.log(((new Date()).getTime() / 1000) + "pop fired");
     var request = $.ajax({
         url: "components/populateComments.php?user=" + $("#user").text(),
         type: "GET",
@@ -139,8 +138,11 @@ function pop() {
 
 var cid = 0;
 var refreshInterval = null;
+$
 
 $(function() {
+    $(document).ready(manageInterval('on'));
+
     $('#submit').on('click', function() {
         var text = toHTML($('#comment').val());
         $("#op").append('<div id="postedComment' + cid + '" reply-level="0"><p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + cid + '"></p><div class="none" id="controls' + cid + '"><span><a href="#" id="rep' + cid + '" onclick="fnRep(' + cid + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + cid + '" onclick="fnEd(' + cid + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + cid + '" onclick="fnD(' + cid + ')">delete&nbsp;</a></span></div></div>');
