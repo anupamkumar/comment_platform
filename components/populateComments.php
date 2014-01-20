@@ -21,122 +21,79 @@
 		array_push($rids,$row['rid']);		
 	}
 	mysqli_close($connection);
-	// for($i=0;$i<count($cids);i++)
-	// {
-	// 	$cur = $cids[$i];
-	// 	if($cids[$i] != -1)
-	// 	{
-	// 		$op = $op."<div id='postedComment".$cids[$i]."'><p><i>".$usernames[$i]."</i></p><p>".$comments[$i]."</p><div id='control' class='none'><span><a href='#' id='rep'>reply</a></span>&nbsp;";
-	// 		if($u == $usernames[$i])
-	// 		{
-	// 			$op = $op."<span><a href='#' id='edt'>Edit</a></span>&nbsp;<span><a href='#' id='del'>Delete</a></span>&nbsp;";
-	// 		}		
-	// 	}			
-		for($index=0;$index<count($cids);$index++)
+	for($index=0;$index<count($cids);$index++)
+	{
+		if($cids[$index] != -1)
 		{
-			if($cids[$index] != -1)
+			$cur = $cids[$index];
+			array_push($tempStack,$cur);								
+		}			
+		$lp = true;
+		while($cur != null)
+		{
+			$cidPos = search($cur,$cids);
+			if( $cidPos != -1)
 			{
-				$cur = $cids[$index];
-				array_push($tempStack,$cur);								
-			}			
-			$lp = true;
-			while($cur != null)
-			{
-				$cidPos = search($cur,$cids);
-				if( $cidPos != -1)
+				if($comments[$cidPos] == '[comment deleted]')
+					$op = $op."<div id='postedComment".$cur."' reply-level='0'><p><i>".$usernames[$cidPos]." says: </i></p><p id='comm".$cur."'>".$comments[$cidPos]."</p><div id='controls".$cur."' class='none'>";
+				else 
 				{
-					if($comments[$cidPos] == '[comment deleted]')
-						$op = $op."<div id='postedComment".$cur."' reply-level='0'><p><i>".$usernames[$cidPos]." says: </i></p><p id='comm".$cur."'>".$comments[$cidPos]."</p><div id='controls".$cur."' class='none'>";
-					else 
+					$op = $op."<div id='postedComment".$cur."' reply-level='0'><p><i>".$usernames[$cidPos]." says: </i></p><p id='comm".$cur."'>".$comments[$cidPos]."</p><div id='controls".$cur."' class='none'><span><a href='#' id='rep".$cur."' onclick='fnRep(".$cur.")'>Reply</a></span>&nbsp;";
+					if($u == $usernames[$cidPos])
 					{
-						$op = $op."<div id='postedComment".$cur."' reply-level='0'><p><i>".$usernames[$cidPos]." says: </i></p><p id='comm".$cur."'>".$comments[$cidPos]."</p><div id='controls".$cur."' class='none'><span><a href='#' id='rep".$cur."' onclick='fnRep(".$cur.")'>Reply</a></span>&nbsp;";
-						if($u == $usernames[$cidPos])
-						{
-							$op = $op."<span><a href='#' id='edt".$cur."' onclick='fnEd(".$cur.")'>Edit</a></span>&nbsp;<span><a href='#' id='del".$cur."' onclick='fnD(".$cur.")'>Delete</a></span>&nbsp;";
-						}
-					}					
-					$op = $op."</div>";
-					$cids[$cidPos] = -1;
-				}				
-				$childPos = search($cur,$rids);
-				if($childPos == -1)
+						$op = $op."<span><a href='#' id='edt".$cur."' onclick='fnEd(".$cur.")'>Edit</a></span>&nbsp;<span><a href='#' id='del".$cur."' onclick='fnD(".$cur.")'>Delete</a></span>&nbsp;";
+					}
+				}					
+				$op = $op."</div>";
+				$cids[$cidPos] = -1;
+			}				
+			$childPos = search($cur,$rids);
+			if($childPos == -1)
+			{
+				$cur = array_pop($tempStack);
+				if($max < $cur)
+					$max = $cur;
+				if(count($tempStack) >= 2)
+					$op = $op."</div>";					
+			}
+			else
+			{
+				if(empty($tempStack))
+					array_push($tempStack,$cur);	
+				$cur = $cids[$childPos];
+				array_push($tempStack,$cur);
+				$noOfBQ = count($tempStack)-1;
+				while($noOfBQ > 0)
 				{
-					$cur = array_pop($tempStack);
-					if($max < $cur)
-						$max = $cur;
-					if(count($tempStack) >= 2)
-						$op = $op."</div>";					
+					$op = $op."<blockquote>";
+					$noOfBQ--;
 				}
+				$noOfBQ = count($tempStack)-1;
+				if($comments[$childPos] == '[comment deleted]')
+					$op = $op."<div id='postedComment".$cur."' reply-level='".$noOfBQ."'><p><i>".$usernames[$childPos]." says: </i></p><p id='comm".$cur."'>".$comments[$childPos]."</p><div id='controls".$cur."' class='none'>";
 				else
 				{
-					if(empty($tempStack))
-						array_push($tempStack,$cur);	
-					$cur = $cids[$childPos];
-					array_push($tempStack,$cur);
-					$noOfBQ = count($tempStack)-1;
-					while($noOfBQ > 0)
+					$op = $op."<div id='postedComment".$cur."' reply-level='".$noOfBQ."'><p><i>".$usernames[$childPos]." says: </i></p><p id='comm".$cur."'>".$comments[$childPos]."</p><div id='controls".$cur."' class='none'><span><a href='#' id='rep".$cur."' onclick='fnRep(".$cur.")'>Reply</a></span>&nbsp;";
+					if($u == $usernames[$childPos])
 					{
-						$op = $op."<blockquote>";
-						$noOfBQ--;
-					}
-					$noOfBQ = count($tempStack)-1;
-					if($comments[$childPos] == '[comment deleted]')
-						$op = $op."<div id='postedComment".$cur."' reply-level='".$noOfBQ."'><p><i>".$usernames[$childPos]." says: </i></p><p id='comm".$cur."'>".$comments[$childPos]."</p><div id='controls".$cur."' class='none'>";
-					else
-					{
-						$op = $op."<div id='postedComment".$cur."' reply-level='".$noOfBQ."'><p><i>".$usernames[$childPos]." says: </i></p><p id='comm".$cur."'>".$comments[$childPos]."</p><div id='controls".$cur."' class='none'><span><a href='#' id='rep".$cur."' onclick='fnRep(".$cur.")'>Reply</a></span>&nbsp;";
-						if($u == $usernames[$childPos])
-						{
-							$op = $op."<span><a href='#' id='edt".$cur."' onclick='fnEd(".$cur.")'>Edit</a></span>&nbsp;<span><a href='#' id='del".$cur."' onclick='fnD(".$cur.")'>Delete</a></span>&nbsp;";
-						}	
-					}
-					
-					$op = $op."</div>";					
-					while($noOfBQ > 0)
-					{
-						$op = $op."</blockquote>";
-						$noOfBQ--;
-					}		
-					$rids[$childPos] = -1;
-					$cids[$childPos] = -1;
+						$op = $op."<span><a href='#' id='edt".$cur."' onclick='fnEd(".$cur.")'>Edit</a></span>&nbsp;<span><a href='#' id='del".$cur."' onclick='fnD(".$cur.")'>Delete</a></span>&nbsp;";
+					}	
 				}
+				
+				$op = $op."</div>";					
+				while($noOfBQ > 0)
+				{
+					$op = $op."</blockquote>";
+					$noOfBQ--;
+				}		
+				$rids[$childPos] = -1;
+				$cids[$childPos] = -1;
 			}
-			$op = $op."</div>";			
 		}
-		$op = $op."<p id='maxcid' hidden='true'>".$max."</p>";
-		echo $op;
-			
-		
-		
-	
-		// for($j=0;$j<count($rids);i++)
-		// {
-		// 	if($cur == $rids[$j])
-		// 	{
-		// 		$x = search($cur);
-		// 		if($x != -1)
-		// 		{
-		// 			$op = $op."<div id='postedComment".$cids[$x]."'><p><i>".$usernames[$x]."</i></p><p>".$comments[$x]."</p><div id='control' class='none'><span><a href='#' id='rep'>reply</a></span>&nbsp;";
-		// 			if($u == $usernames[$x])
-		// 			{
-		// 				$op = $op."<span><a href='#' id='edt'>Edit</a></span>&nbsp;<span><a href='#' id='del'>Delete</a></span>&nbsp;";
-		// 			}
-		// 			$cur = $cids[$x];					
-		// 			$rids[$x] = -1
-		// 			$cids[$x] = -1;
-		// 			$j =0;
-		// 		}				
-		// 	}
-		// }
-		// $op = $op."</div></div>";
-	
-
-	// $op = $op."<div id='postedComment".$row['cid']."'><p><i>".$row['username']."</i></p><p>".$row['ct']."</p><div id='control' class='none'><span><a href='#' id='rep'>reply</a></span>&nbsp;";
-	// if($u == $row['username'])
-	// {
-	// 	$op = $op."<span><a href='#' id='edt'>Edit</a></span>&nbsp;<span><a href='#' id='del'>Delete</a></span>&nbsp;";
-	// }
-	// $op = $op."</div></div>";
+		$op = $op."</div>";			
+	}
+	$op = $op."<p id='maxcid' hidden='true'>".$max."</p>";
+	echo $op;
 
 	function search($curCid,$arr)
 	{
