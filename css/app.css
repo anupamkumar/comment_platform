@@ -1,0 +1,17 @@
+div
+{
+	border:1px dotted;
+	border-radius:12px;
+	background-color:lightgrey;
+}
+
+.none
+{
+	border:0px;
+	background-color:white;
+}
+
+.container
+{
+	width: 40%;
+}
