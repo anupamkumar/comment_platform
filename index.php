@@ -1,8 +1,6 @@
 <html>
 <head>
-<title>Comment Platform</title>
-	<script src="js/jquery.js"></script>
-	<script src="js/app.js"></script>
+<title>Comment Platform</title>	
 	<link rel="stylesheet" type="text/css" href="css/app.css">
 </head>
 <body>
