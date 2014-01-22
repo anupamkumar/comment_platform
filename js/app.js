@@ -83,36 +83,45 @@ function fnD(myId) {
 function fnPutR(myId) {
     var t = toHTML($('#replycomment').val());
     var pc = "#postedComment" + cid;
-    $(pc).empty();
-    $(pc).append('<p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + cid + '"></p><div class="none" id="controls' + cid + '"><span><a href="#" id="rep' + cid + '" onclick="fnRep(' + cid + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + cid + '" onclick="fnEd(' + cid + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + cid + '" onclick="fnD(' + cid + ')">delete&nbsp;</a></span></div>');
-    $('#comm' + cid).append(t);
-    cid++;
     var req = $.ajax({
         url: "components/addReply.php?user=" + $("#user").text() + "&cmt=" + t + "&rid=" + myId,
         type: "GET",
         dataType: "html"
     });
     req.done(function(ajaxOp) {
-        $("#op").append(ajaxOp);
+        if (ajaxOp !== "error") {
+            $(pc).empty();
+            $(pc).append('<p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + cid + '"></p><div class="none" id="controls' + cid + '"><span><a href="#" id="rep' + cid + '" onclick="fnRep(' + cid + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + cid + '" onclick="fnEd(' + cid + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + cid + '" onclick="fnD(' + cid + ')">delete&nbsp;</a></span></div>');
+            $('#comm' + cid).append(t);
+            cid++;
+            manageInterval('on');
+        } else {
+            $(pc).append("<p style='color: red'>Error: Could not add reply Page will auto-refresh and this message will dissapear. You can retry replying then.</p>");
+            manageInterval('on');
+        }
     });
-    manageInterval('on');
+
 }
 
 function fnputE(myId) {
     var t = toHTML($('#editcomment').val());
     var pc = "#postedComment" + myId;
-    $(pc).empty();
-    $(pc).append('<p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + myId + '"></p><div class="none" id="controls' + myId + '"><span><a href="#" id="rep' + myId + '" onclick="fnRep(' + myId + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + myId + '" onclick="fnEd(' + myId + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + myId + '" onclick="fnD(' + myId + ')">delete&nbsp;</a></span></div>');
-    $('#comm' + myId).append(t);
     var req = $.ajax({
         url: "components/editReply.php?cmt=" + t + "&cid=" + myId,
         type: "GET",
         dataType: "html"
     });
     req.done(function(ajaxOp) {
-        $("#op").append(ajaxOp);
+        if (ajaxOp !== "error") {
+            $(pc).append('<p id="u"><i>' + $("#user").text() + ' says:</i></p><p id="comm' + myId + '"></p><div class="none" id="controls' + myId + '"><span><a href="#" id="rep' + myId + '" onclick="fnRep(' + myId + ')">reply</a>&nbsp;</span>&nbsp;<span><a href="#" id="edt' + myId + '" onclick="fnEd(' + myId + ')">edit&nbsp;</a></span>&nbsp;<span><a href="#" id="del' + myId + '" onclick="fnD(' + myId + ')">delete&nbsp;</a></span></div>');
+            $('#comm' + myId).append(t);
+            manageInterval('on');
+        } else {
+            $(pc).append("<p style='color: red'>Error: Could not add edit page will auto-refresh and this message will dissapear. You can retry editing then.");
+            manageInterval('on');
+        }
     });
-    manageInterval('on');
+
 }
 
 function manageInterval(myswitch) {

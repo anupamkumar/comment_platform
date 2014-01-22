@@ -8,7 +8,8 @@ if(mysqli_connect_errno())
 }
 if(!mysqli_query($connection,"update comments set `ct` = '".$cmt."' where `cid`='".$cid."'"))
 {
-	die('<script>alert("Error: '.mysqli_error($connection).'")</script>');
+	// die('<script>alert("Error: '.mysqli_error($connection).'")</script>');
+	die('error');
 }
 mysqli_close($connection);
 ?>

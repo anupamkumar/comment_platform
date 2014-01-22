@@ -10,7 +10,8 @@
 	}
 	if(!mysqli_query($connection,"insert into comments (`ct`,`username`,`rid`) values ('".$cmt."','".$username."','".$rid."')"))
 	{
-		die('<script>alert("Error: '.mysqli_error($connection).'")</script>');
+		//die("'<script>alert("Error: '.mysqli_error($connection).'")</script>'");
+		die('error');
 	}
 	mysqli_close($connection);
 ?>
