@@ -11,17 +11,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<?php 
-	$u = $_GET['u']." says:";
-	$user = $_GET['user'];
-	$comment = $_GET['comm'];
-	$s = "<p><i>".$u."</i></p>";
-	$s = $s."<p>".$comment."</p>";
-	$s = $s."<span><a id='rep'>Reply</a></span>&nbsp;";
-	if($user == $u)
-	{
-		$s = $s."<span><a id='edt'>Edit</a></span>&nbsp;<span><a id='del'>Delete</a></span>";
-	}
-	echo $s;
-?>
-
+<?php echo "<p id='user' hidden='true'>".$_GET['name']."</p>"; ?>
+<div class="none">
+	<textarea name="comment" id="comment" ></textarea><br/>
+	<input type="button" name="submit" id="submit" value="Submit">
+</div>
+<div id='op' class="none"><div class="none" align="right"><h2>Loading comments</h2></div><img src="img/wait.gif" /></div>
+<script src="js/jquery.js"></script>
+<script src="js/comments_platform.js"></script>
